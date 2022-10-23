@@ -28,12 +28,14 @@
 #include <err.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 /* OP-TEE TEE client API (built by optee_client) */
 #include <tee_client_api.h>
 
 /* For the UUID (found in the TA's h-file(s)) */
 #include <hello_world_ta.h>
+
 
 int main(void)
 {
@@ -43,6 +45,8 @@ int main(void)
 	TEEC_Operation op;
 	TEEC_UUID uuid = TA_HELLO_WORLD_UUID;
 	uint32_t err_origin;
+	struct timespec start, end;
+	long long elapsed_time;
 
 	/* Initialize a context connecting us to the TEE */
 	res = TEEC_InitializeContext(NULL, &ctx);
@@ -83,11 +87,22 @@ int main(void)
 	 * called.
 	 */
 	printf("Invoking TA to increment %d\n", op.params[0].value.a);
-	res = TEEC_InvokeCommand(&sess, TA_HELLO_WORLD_CMD_INC_VALUE, &op,
-				 &err_origin);
-	if (res != TEEC_SUCCESS)
-		errx(1, "TEEC_InvokeCommand failed with code 0x%x origin 0x%x",
-			res, err_origin);
+	clock_gettime(CLOCK_MONOTONIC, &start);
+
+	for(int i = 0; i < 10000; i++){
+		res = TEEC_InvokeCommand(&sess, TA_HELLO_WORLD_CMD_INC_VALUE, &op,
+					&err_origin);
+		if (res != TEEC_SUCCESS)
+			errx(1, "TEEC_InvokeCommand failed with code 0x%x origin 0x%x",
+				res, err_origin);
+	}
+
+	clock_gettime(CLOCK_MONOTONIC, &end);
+
+	elapsed_time = 1000 * 1000 * 1000 * (end.tv_sec - start.tv_sec);
+	elapsed_time += end.tv_nsec - start.tv_nsec;
+
+	printf("%lld nsec\n", elapsed_time);
 	printf("TA incremented value to %d\n", op.params[0].value.a);
 
 	/*
