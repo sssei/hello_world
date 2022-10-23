@@ -30,7 +30,7 @@
 
 #include <hello_world_ta.h>
 
-static TEE_Result fibonacci(uint32_t param_types, TEE_Pram params[4])
+static TEE_Result fibonacci(uint32_t param_types, TEE_Param params[4])
 {
 	uint32_t exp_param_types = TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INOUT,
 											   TEE_PARAM_TYPE_NONE,
@@ -119,7 +119,7 @@ void TA_CloseSessionEntryPoint(void __maybe_unused *sess_ctx)
 	IMSG("Goodbye!\n");
 }
 
-static TEE_Result inc_value(uint32_t param_types,
+/* static TEE_Result inc_value(uint32_t param_types,
 	TEE_Param params[4])
 {
 	uint32_t exp_param_types = TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INOUT,
@@ -137,7 +137,7 @@ static TEE_Result inc_value(uint32_t param_types,
 	IMSG("Increase value to: %u", params[0].value.a);
 
 	return TEE_SUCCESS;
-}
+} */
 
 static TEE_Result dec_value(uint32_t param_types,
 	TEE_Param params[4])
