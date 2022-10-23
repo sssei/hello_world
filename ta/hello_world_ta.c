@@ -30,31 +30,6 @@
 
 #include <hello_world_ta.h>
 
-static TEE_Result fibonacci(uint32_t param_types, TEE_Param params[4])
-{
-	uint32_t exp_param_types = TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INOUT,
-											   TEE_PARAM_TYPE_NONE,
-											   TEE_PARAM_TYPE_NONE,
-											   TEE_PARAM_TYPE_NONE);
-	DMSG("has been called");
-	if (param_types != exp_param_types)
-		return TEE_ERROR_BAD_PARAMETERS;
-
-	IMSG("Got value: %u from NW", params[0].value.a);
-    int n = params[0].value.a;
-    int f[2] = {0, 1};
-    if (n <= 1) {
-       params[0].value.a = f[n];
-    } else {
-        for (int i = 2; i <= n; i++) {
-            params[0].value.a = f[0] + f[1];
-            f[0] = f[1];
-            f[1] = params[0].value.a;
-        }
-    }
-    IMSG("Increase value to: %u", params[0].value.a);
-    return TEE_SUCCESS;
-}
 /*
  * Called when the instance of the TA is created. This is the first call in
  * the TA.
@@ -119,7 +94,7 @@ void TA_CloseSessionEntryPoint(void __maybe_unused *sess_ctx)
 	IMSG("Goodbye!\n");
 }
 
-/* static TEE_Result inc_value(uint32_t param_types,
+static TEE_Result inc_value(uint32_t param_types,
 	TEE_Param params[4])
 {
 	uint32_t exp_param_types = TEE_PARAM_TYPES(TEE_PARAM_TYPE_VALUE_INOUT,
@@ -137,7 +112,7 @@ void TA_CloseSessionEntryPoint(void __maybe_unused *sess_ctx)
 	IMSG("Increase value to: %u", params[0].value.a);
 
 	return TEE_SUCCESS;
-} */
+}
 
 static TEE_Result dec_value(uint32_t param_types,
 	TEE_Param params[4])
@@ -171,7 +146,7 @@ TEE_Result TA_InvokeCommandEntryPoint(void __maybe_unused *sess_ctx,
 
 	switch (cmd_id) {
 	case TA_HELLO_WORLD_CMD_INC_VALUE:
-		return fibonacci(param_types, params);
+		return inc_value(param_types, params);
 	case TA_HELLO_WORLD_CMD_DEC_VALUE:
 		return dec_value(param_types, params);
 	default:
