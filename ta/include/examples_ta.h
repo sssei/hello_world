@@ -24,17 +24,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef TA_HELLO_WORLD_H
-#define TA_HELLO_WORLD_H
+#ifndef TA_EXAMPLES_H
+#define TA_EXAMPLES_H
 
 
 /*
  * This UUID is generated with uuidgen
  * the ITU-T UUID generator at http://www.itu.int/ITU-T/asn1/uuid.html
  */
-#define TA_HELLO_WORLD_UUID \
-	{ 0x8aaaf200, 0x2450, 0x11e4, \
-		{ 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} }
+
+#define TA_EXAMPLES_UUID { 0xb725875a, 0x41de, 0x4648, \ 
+                { 0x84, 0xae, 0xf4, 0x55, 0x6d, 0x0a, 0x8f, 0x2e} }		
 
 /* The function IDs implemented in this TA */
 #define TA_HELLO_WORLD_CMD_INC_VALUE		0

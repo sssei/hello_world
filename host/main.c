@@ -34,7 +34,7 @@
 #include <tee_client_api.h>
 
 /* For the UUID (found in the TA's h-file(s)) */
-#include <hello_world_ta.h>
+#include <examples_ta.h>
 
 
 int main(void)
@@ -105,13 +105,6 @@ int main(void)
 	printf("%lld nsec\n", elapsed_time);
 	printf("TA incremented value to %d\n", op.params[0].value.a);
 
-	/*
-	 * We're done with the TA, close the session and
-	 * destroy the context.
-	 *
-	 * The TA will print "Goodbye!" in the log when the
-	 * session is closed.
-	 */
 
 	TEEC_CloseSession(&sess);
 
