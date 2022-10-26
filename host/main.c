@@ -43,7 +43,7 @@ int main(void)
 	TEEC_Context ctx;
 	TEEC_Session sess;
 	TEEC_Operation op;
-	TEEC_UUID uuid = TA_HELLO_WORLD_UUID;
+	TEEC_UUID uuid = TA_EXAMPLES_UUID;
 	uint32_t err_origin;
 	struct timespec start, end;
 	long long elapsed_time;

@@ -1,4 +1,4 @@
-###################### optee-hello-world ######################
+###################### optee-examples ######################
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
