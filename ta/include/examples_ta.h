@@ -33,11 +33,72 @@
  * the ITU-T UUID generator at http://www.itu.int/ITU-T/asn1/uuid.html
  */
 
-#define TA_EXAMPLES_UUID { 0xb725875a, 0x41de, 0x4648, \ 
+#define TA_EXAMPLES_UUID { 0xb725875a, 0x41de, 0x4648, \
                 { 0x84, 0xae, 0xf4, 0x55, 0x6d, 0x0a, 0x8f, 0x2e} }		
 
-/* The function IDs implemented in this TA */
-#define TA_HELLO_WORLD_CMD_INC_VALUE		0
-#define TA_HELLO_WORLD_CMD_DEC_VALUE		1
+/*
+ * Opens a TCP socket and returns an opaque handle
+ *
+ * [in]     params[0].value.a	ipVersion
+ * [in]     params[0].value.b	server port
+ * [in]     params[1].memref	server address
+ * [out]    params[2].memref	handle
+ * [out]    params[3].value.a	protocol error
+ */
+#define TA_SOCKET_CMD_TCP_OPEN	0
+
+/*
+ * Opens a UDP socket and returns an opaque handle
+ *
+ * [in]     params[0].value.a	ipVersion
+ * [in]     params[0].value.b	server port
+ * [in]     params[1].memref	server address
+ * [out]    params[2].memref	handle
+ * [out]    params[3].value.a	protocol error
+ */
+#define TA_SOCKET_CMD_UDP_OPEN	1
+
+/*
+ * Closes a socket
+ *
+ * [in]     params[0].memref	handle
+ */
+#define TA_SOCKET_CMD_CLOSE	2
+
+/*
+ * Send data on socket
+ *
+ * [in]     params[0].memref	handle
+ * [in]     params[1].memref	data
+ * [in]     params[2].value.a	timeout
+ * [out]    params[2].value.b	sent bytes
+ */
+#define TA_SOCKET_CMD_SEND	3
+
+/*
+ * Receive data on socket
+ *
+ * [in]     params[0].memref	handle
+ * [out]    params[1].memref	data
+ * [in]     params[2].value.a	timeout
+ */
+#define TA_SOCKET_CMD_RECV	4
+
+/*
+ * Retrieve protocol error from socket
+ *
+ * [in]     params[0].memref	handle
+ * [out]    params[1].value.a	error code
+ */
+#define TA_SOCKET_CMD_ERROR	5
+
+/*
+ * Ioctl on socket
+ *
+ * [in]     params[0].memref	handle
+ * [in/out] params[1].memref	data
+ * [in]     params[2].value.a	command code
+ */
+#define TA_SOCKET_CMD_IOCTL	6
 
 #endif /*TA_HELLO_WORLD_H*/

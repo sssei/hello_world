@@ -35,7 +35,58 @@
 
 /* For the UUID (found in the TA's h-file(s)) */
 #include <examples_ta.h>
+#include <tee_isocket.h>
+#include <tee_tcpsocket.h>
 
+struct socket_handle {
+	uint64_t buf[2];
+	size_t blen;
+}
+
+static TEE_Result socket_tcp_open(TEEC_Session *session, uint32_t ip_vers, 
+									const char *addr, uint16_t port, 
+									struct socket_handle *handle, 
+									uint32_t *error, uint32_t *ret_orig)
+{
+	TEE_Result res = TEE_ERROR_GENERIC;
+	TEE_Operation op = {};
+
+	memset(handle, 0, sizeof(*handle));
+
+	op.params[0].value.a = ip_vers;
+	op.params[0].value.b = port;
+	op.params[1].tmpref.buffer = (void *)addr;
+	op.params[1].tmpref.size = strlen(addr) + 1;
+	op.params[2].tmpref.buffer = handle->buf;
+	op.params[2].tmpref.size = sizeof(handle->buf);
+
+	op.paramTypes =  TEEC_PARAM_TYPES(TEEC_VALUE_INPUT,
+					 TEEC_MEMREF_TEMP_INPUT,
+					 TEEC_MEMREF_TEMP_OUTPUT,
+					 TEEC_VALUE_OUTPUT);
+
+	res = TEEC_InvokeCommand(session, TA_SOCKET_CMD_TCP_OPEN,
+							&op, ret_orig);
+
+	handle->blen = op.params[2].tmpref.size; 
+	*error = op.params[3].value.a;
+	return res;
+
+}	
+
+static TEE_Result socket_close(TEEC_Session *session,
+			      struct socket_handle *handle, uint32_t *ret_orig)
+{
+	TEEC_Operation op = {};
+
+	op.params[0].tmpref.buffer = handle->buf;
+	op.params[0].tmpref.size = handle->blen;
+
+	op.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_TEMP_INPUT,
+					 TEEC_NONE, TEEC_NONE, TEEC_NONE);
+
+	return TEEC_InvokeCommand(session, TA_SOCKET_CMD_CLOSE, &op, ret_orig);
+}
 
 int main(void)
 {
@@ -44,9 +95,13 @@ int main(void)
 	TEEC_Session sess;
 	TEEC_Operation op;
 	TEEC_UUID uuid = TA_EXAMPLES_UUID;
+	TEE_Result res = TEE_ERROR_GENERIC;
 	uint32_t err_origin;
 	struct timespec start, end;
 	long long elapsed_time;
+	struct socket_handle sh = { };
+	uint32_t ret_orig = 0;
+	uint32_t proto_error = 0;
 
 	/* Initialize a context connecting us to the TEE */
 	res = TEEC_InitializeContext(NULL, &ctx);
@@ -82,10 +137,7 @@ int main(void)
 					 TEEC_NONE, TEEC_NONE);
 	op.params[0].value.a = 42;
 
-	/*
-	 * TA_HELLO_WORLD_CMD_INC_VALUE is the actual function in the TA to be
-	 * called.
-	 */
+/* 	
 	printf("Invoking TA to increment %d\n", op.params[0].value.a);
 	clock_gettime(CLOCK_MONOTONIC, &start);
 
@@ -104,7 +156,15 @@ int main(void)
 
 	printf("%lld nsec\n", elapsed_time);
 	printf("TA incremented value to %d\n", op.params[0].value.a);
+ */
+	printf("Invoking TA to open tcp\n");
+	
+	res = socket_tcp_open(&sess, TEE_IP_VERSION_4, "0.0.0.0", 8080, 
+					&sh, &proto_error, &ret_orig);
 
+	if (res != TEE_SUCCESS){
+		errx(1, "socket_tcp_open failed with code 0x%x", res);
+	}
 
 	TEEC_CloseSession(&sess);
 
