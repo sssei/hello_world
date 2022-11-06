@@ -26,9 +26,10 @@
  */
 #include <string.h>
 #include <stdlib.h>
-#include <ta_socket.h>
+/* #include <ta_socket.h> */
 #include <tee_isocket.h>
 #include <tee_tcpsocket.h>
+#include <tee_udpsocket.h>
 #include <tee_internal_api.h>
 #include <tee_internal_api_extensions.h>
 
@@ -82,7 +83,7 @@ void TA_CloseSessionEntryPoint(void __maybe_unused *sess_ctx)
 struct sock_handle {
 	TEE_iSocketHandle ctx;
 	TEE_iSocket *socket;
-}
+};
 
 static TEE_Result ta_entry_tcp_open(uint32_t param_types, TEE_Param params[4])
 {
@@ -113,6 +114,7 @@ static TEE_Result ta_entry_tcp_open(uint32_t param_types, TEE_Param params[4])
 	if (!setup.server_addr)
 		return TEE_ERROR_OUT_OF_MEMORY;
 
+	IMSG("This is ta_entry_tcp_open");
 	h.socket = TEE_tcpSocket;
 	res = h.socket->open(&h.ctx, &setup, &params[3].value.a);
 	free(setup.server_addr);
